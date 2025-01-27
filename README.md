@@ -11,6 +11,13 @@ I was never fully satisfied with how my original code turned out. Now, three yea
 ## Known Issues
 For the NFW Halo I was provided a table of 1-D velocity dispersions, I no longer have that file or a means to access it again. Currently I imploy the Isotropic Jeans equation to calculate the dispersions at my accepted radius distribution. This technique should work, however the galxies generated from the NFW model don't reach equalibrium. 
 
+## To Do
+* Make better plots and figures
+* Finish adding NFW sphere
+* Add remaining models from old project
+* Add galaxy evolution
+* Make more robust and accurate models 
+
 ## Acknowledgements 
 I would like to acknowledge UMass Amherst and Dr. Neal Katz for providing the original project guidelines.  
 The book ["Dynamics and Astrophysics of Galaxies"](https://galaxiesbook.org/index.html) by Dr. Jo Bovy has been immensely helpful in deepening my understanding of the equations used in this project. 
