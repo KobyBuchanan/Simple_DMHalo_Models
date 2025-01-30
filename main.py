@@ -11,7 +11,7 @@ from plots import DataView
 
 def main():
     #generates a galaxy for a given model, values are tabulated (will implement astropy tables soon)
-    table = generate_halo(N, "Isothermal")
+    table = generate_halo(N, "NFW")
 
     #class object that stores data viewing tools, like phase space plots
     dv = DataView(table)
@@ -22,6 +22,10 @@ def main():
 
     #An example plot
     dv.position_plot()
+
+    #More tool testing
+    dv.acceptance_rejection_plot()
+    dv.velocity_plot()
 
 
 if __name__ == "__main__":

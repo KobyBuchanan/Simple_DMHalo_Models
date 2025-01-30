@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib.colors import LogNorm
 import numpy as np
+from units import radius_space
 
 
 class DataView:
@@ -81,5 +82,13 @@ class DataView:
         pass
 
     def acceptance_rejection_plot(self):
-        pass
+        density_distribution = self.table.meta['SampFunc']
+        plt.plot(radius_space, density_distribution(radius_space), label="Function", color='black')
+        plt.hist(self.radius, bins=50, density=True, alpha=0.2, label="Sampled Distribution")
+        plt.xlim(0, 1)
+        plt.ylim(0, 2.5)
+        plt.xlabel("Radius")
+        plt.legend()
+        plt.show()
+
 
