@@ -8,6 +8,7 @@ from units import radius_space
 class DataView:
     def __init__(self, table):
         self.table = table
+        self.model = self.table.meta['model']
         #Position data
         #Spherical coordinates
         self.azimuth = self.table['Azimuth']
@@ -26,6 +27,9 @@ class DataView:
         # Energy data
         self.T = self.table['T']
         self.W = self.table['W']
+        #Shell density data
+        self.mid = self.table['mid'][0:1000]
+        self.ShDen = self.table['ShDen'][0:1000]
 
     def position_plot(self, coord: str = 'Cartesian'):
         if coord == 'Cartesian':
@@ -79,7 +83,14 @@ class DataView:
         print(2 * T / np.abs(W))
 
     def density_plot(self):
-        pass
+        density = self.table.meta['DenFunc']
+        plt.loglog(self.mid, self.ShDen, label='model')
+        plt.loglog(radius_space, density(radius_space), label='true')
+        plt.legend()
+        plt.title(f'{self.model} model')
+        plt.ylabel('Density')
+        plt.xlabel('Radius (kpc)')
+        plt.show()
 
     def acceptance_rejection_plot(self):
         density_distribution = self.table.meta['SampFunc']

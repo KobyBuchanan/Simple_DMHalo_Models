@@ -116,6 +116,21 @@ def velocity_transform(coords: tuple, vels: tuple):
     return v_1_prime, v_2_prime, v_3_prime, V_prime
 
 
+def shell_density(r, m):
+    binN = 1000
+    ShDen = np.zeros(binN)
+    rBin = np.linspace(0, 1, binN + 1)
+    mid = np.zeros(binN)
+    for i in range(binN):
+        Rmin = rBin[i]
+        Rmax = rBin[i + 1]
+        mid[i] = (Rmin + Rmax) / 2
+        index1 = np.where(r > Rmin)[0]
+        index2 = np.where(r[index1] < Rmax)[0]
+        ShDen[i] = np.sum(m[index1[index2]]) / ((4 * np.pi / 3) * (Rmax ** 3 - Rmin ** 3))
+    return ShDen, mid
+
+
 def generate_halo(n: int, model: str):
     if model == 'Isothermal':
         rho = rho_iso
@@ -135,15 +150,18 @@ def generate_halo(n: int, model: str):
 
     # Gravitational potential function for current model
     potential = potential_function(model)[1]
+    ShDen = np.zeros(n)
+    mid = np.zeros(n)
 
     metadata = {
         "CTime": time.ctime(time.time()),
         "model": f'{model}',
-        "SampFunc": distribution_func
+        "SampFunc": distribution_func,
+        "DenFunc": rho_lamb
     }
     data = Table(meta=metadata)
     data['Index'] = np.arange(0, n, 1)
-    data['Mass'] = np.ones(n) * 1 / 10
+    data['Mass'] = np.ones(n) * 1 / n
     data['Azimuth'] = Azimuth
     data['Elevation'] = Elevation
     data['Radius'] = Radial_distance
@@ -153,7 +171,12 @@ def generate_halo(n: int, model: str):
     data['v_z'] = v_3
     data['W'] = data['Mass'] * potential(data['Radius'])
     data['T'] = 0.5 * data['Mass'] * data['Velocity'] ** 2
+    sd, mb = shell_density(data['Radius'], data['Mass'])
+    for i in range(len(sd)):
+        ShDen[i] = sd[i]
+        mid[i] = mb[i]
+    data['ShDen'] = ShDen
+    data['mid'] = mid
 
     return data
 
-#------------------Testing--------------------
