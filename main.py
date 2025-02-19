@@ -1,6 +1,9 @@
-from units import N
-from model_tools import generate_halo
-from plots import DataView
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+
+from potentials import Isothermal, NFW
+from modeling import Model
 
 #want 6-d phase space for each particle in model
 # m[i], x[i], y[i], z[i], vx[i], vy[i], vz[i]
@@ -10,22 +13,54 @@ from plots import DataView
 
 
 def main():
-    #generates a galaxy for a given model, values are tabulated (will implement astropy tables soon)
-    table = generate_halo(N, "NFW")
+    Iso = Isothermal()
+    NFW = NFW()
 
-    #class object that stores data viewing tools, like phase space plots
-    dv = DataView(table)
+    start = time.time()
+    model = Model(Iso, 1)
 
-    #An example tool, this prints the equilibrium of the system
-    #here equilibrium is defined as 2T / |W| = 1
-    dv.equilibrium_test()
+    position_data, velocity_data, sigma = model.sample()
+    r = position_data[0]
+    v_x = velocity_data[0]
+    v_y = velocity_data[1]
+    v_z = velocity_data[2]
+    velocity_vectors = v_x**2 + v_y**2 + v_z**2
 
-    #An example plot
-    dv.position_plot()
+    T = np.sum(0.5 * velocity_vectors)
+    W = -np.sum(NFW.mass(r) / r)
+    print("ratio = ", 2 * T / np.abs(W))
+    end = time.time()
+    print(end - start)
 
-    #More tool testing
-    dv.acceptance_rejection_plot()
-    dv.velocity_plot()
+    sorted_index = np.argsort(r)
+    r_sorted = r[sorted_index]
+    sigma_sorted = sigma[sorted_index]
+    plt.plot(r_sorted, sigma_sorted, '--')
+    plt.ticklabel_format(useOffset=False)
+    plt.show()
+
+    start = time.time()
+    model = Model(NFW, 1)
+
+    position_data, velocity_data, sigma = model.sample()
+    r = position_data[0]
+    v_x = velocity_data[0]
+    v_y = velocity_data[1]
+    v_z = velocity_data[2]
+    velocity_vectors = v_x**2 + v_y**2 + v_z**2
+
+    T = np.sum(0.5 * velocity_vectors)
+    W = -np.sum(NFW.mass(r) / r)
+    print("ratio = ", 2 * T / np.abs(W))
+    end = time.time()
+    print(end - start)
+
+    sorted_index = np.argsort(r)
+    r_sorted = r[sorted_index]
+    sigma_sorted = sigma[sorted_index]
+    plt.plot(r_sorted, sigma_sorted, '--')
+    plt.ticklabel_format(useOffset=False)
+    plt.show()
 
 
 if __name__ == "__main__":

@@ -9,11 +9,10 @@ This project originated as an assignment for a computational physics course I to
 I was never fully satisfied with how my original code turned out. Now, three years later, with more experience under, I have decided to revisit the project and completely overhaul it. The original project guidelines included numerous simplifications and assumptions to make these "toy models" manageable. While many of these simplifications remain in the current version, I am gradually working toward more complex models that incorporate scientifically justified assumptions 
 
 ## Known Issues
-For the NFW Halo I was provided a table of 1-D velocity dispersions, I no longer have that file or a means to access it again. Currently I imploy the Isotropic Jeans equation to calculate the dispersions at my accepted radius distribution. This technique should work, however the galxies generated from the NFW model don't reach equalibrium. 
+The code has been optimized for spherical models, plot.py is not currently used. Disk models are being implemented. 
 
 ## To Do
 * Make better plots and figures
-* Finish adding NFW sphere
 * Add remaining models from old project
 * Add galaxy evolution
 * Make more robust and accurate models 
