@@ -1,9 +1,6 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import time
-
-from potentials import Isothermal, NFW
-from modeling import Model
+from models.sphere_models import *
+from models.disk_models import *
+from plot_tools.dataview import DataView
 
 #want 6-d phase space for each particle in model
 # m[i], x[i], y[i], z[i], vx[i], vy[i], vz[i]
@@ -13,55 +10,23 @@ from modeling import Model
 
 
 def main():
-    Iso = Isothermal()
-    NFW = NFW()
+    #Sphere gals
+    gal_iso = Isothermal()
+    gal_nfw = NFW()
+    plots=DataView(gal_nfw)
+    plots.plot()
+    plots.radius_distribution()
+    plots.energy_ratio()
+    plots.plot_vCirc()
 
-    start = time.time()
-    model = Model(Iso, 1)
-
-    position_data, velocity_data, sigma = model.sample()
-    r = position_data[0]
-    v_x = velocity_data[0]
-    v_y = velocity_data[1]
-    v_z = velocity_data[2]
-    velocity_vectors = v_x**2 + v_y**2 + v_z**2
-
-    T = np.sum(0.5 * velocity_vectors)
-    W = -np.sum(NFW.mass(r) / r)
-    print("ratio = ", 2 * T / np.abs(W))
-    end = time.time()
-    print(end - start)
-
-    sorted_index = np.argsort(r)
-    r_sorted = r[sorted_index]
-    sigma_sorted = sigma[sorted_index]
-    plt.plot(r_sorted, sigma_sorted, '--')
-    plt.ticklabel_format(useOffset=False)
-    plt.show()
-
-    start = time.time()
-    model = Model(NFW, 1)
-
-    position_data, velocity_data, sigma = model.sample()
-    r = position_data[0]
-    v_x = velocity_data[0]
-    v_y = velocity_data[1]
-    v_z = velocity_data[2]
-    velocity_vectors = v_x**2 + v_y**2 + v_z**2
-
-    T = np.sum(0.5 * velocity_vectors)
-    W = -np.sum(NFW.mass(r) / r)
-    print("ratio = ", 2 * T / np.abs(W))
-    end = time.time()
-    print(end - start)
-
-    sorted_index = np.argsort(r)
-    r_sorted = r[sorted_index]
-    sigma_sorted = sigma[sorted_index]
-    plt.plot(r_sorted, sigma_sorted, '--')
-    plt.ticklabel_format(useOffset=False)
-    plt.show()
-
-
+    #Disk gals
+    gal_disk_inHalo = MasslessDiskInHalo()
+    gal_disk = IsolatedExpDisk()
+    gal = ED()
+    plots = DataView(gal)
+    plots.plot()
+    plots.radius_distribution()
+    plots.plot_vCirc()
+    plots.energy_ratio()
 if __name__ == "__main__":
     main()
