@@ -14,12 +14,12 @@ def main():
     gal_iso = Isothermal()
     gal_nfw = NFW()
     plots=DataView(gal_nfw)
-    plots.plot()
-    plots.radius_distribution()
-    plots.energy_ratio()
-    plots.plot_vCirc()
+    #plots.plot(use_physical=True)
+    #plots.radius_distribution()
+    #plots.energy_ratio()
+    plots.plot_vCirc(use_physical=True)
 
-    #Disk gals
+    '''#Disk gals
     gal_disk_inHalo = MasslessDiskInHalo()
     gal_disk = IsolatedExpDisk()
     gal = ED()
@@ -27,6 +27,6 @@ def main():
     plots.plot()
     plots.radius_distribution()
     plots.plot_vCirc()
-    plots.energy_ratio()
+    plots.energy_ratio()'''
 if __name__ == "__main__":
     main()

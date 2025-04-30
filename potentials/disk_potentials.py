@@ -2,8 +2,6 @@ import numpy as np
 from scipy import special
 from potentials.sphereical_potentials import nfw
 
-G = 1
-
 class DiskPotential:
     def __init__(self):
         self.mass_disk = 1
@@ -37,7 +35,7 @@ class EDNoHalo(DiskPotential):
         self.Sig0 = self.mass_disk / (2 * np.pi * self.Rd ** 2)
 
     def _evaluate(self, r):
-        const = np.pi * G * self.Sig0
+        const = np.pi * self.Sig0 # multiplied by G=1
         return const * r * (self.I1(r) * self.K0(r) - self.I0(r) * self.K1(r))
 
     def _suf_den(self, r):
@@ -73,7 +71,7 @@ class DiskAndHalo(DiskPotential):
         self.Sig0 = self.mass_disk / (2 * np.pi * self.Rd ** 2)
 
     def _evaluate(self, r):
-        const = np.pi * G * self.Sig0
+        const = np.pi * self.Sig0 #multiplied by G=1
         disk_pot = const * r * (self.I1(r) * self.K0(r) - self.I0(r) * self.K1(r))
         halo_pot = self.halo._evaluate(r)
         return disk_pot + halo_pot

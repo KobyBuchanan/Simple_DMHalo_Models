@@ -1,5 +1,5 @@
 import numpy as np
-G = 1
+
 
 class SphericalPotential:
 
@@ -16,7 +16,7 @@ class SphericalPotential:
         return self._mass(r)
 
     def vCirc(self, r):
-        return np.sqrt(G * self.mass(r) / r)
+        return np.sqrt(self.mass(r) / r) #multiply by G = 1
 
     def radius_dis(self, r):
         return 4 * np.pi * self.den(r) * r ** 2

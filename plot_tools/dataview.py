@@ -3,8 +3,8 @@ from mpl_toolkits import mplot3d
 from matplotlib.colors import LogNorm
 import numpy as np
 from plot_tools.plot_helpers import convert_cartesian
+from constants import *
 
-star_masses = 1 / 100_000
 
 
 class DataView:
@@ -22,8 +22,12 @@ class DataView:
         self._coords = model.sample()  # defaults to spherical
         self._vels = model.sample_velocities(r=self._coords[0])  # defaults to cartesian
 
-    def plot(self):
+    def plot(self,use_physical = False):
         x, y, z = convert_cartesian(self._coords, self._type)
+        if use_physical:
+            x = x * RADIUS_UNIT
+            y = y * RADIUS_UNIT
+            z = z * RADIUS_UNIT
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 8))
         ax1.hist2d(x, y, bins=(50, 50), norm=LogNorm(), cmap='jet')
         ax1.set_aspect('equal')
@@ -42,13 +46,16 @@ class DataView:
     def radius_distribution(self):
         if self._type == 'is_sphere':
             y_label = '$4\\pi r^2 \\rho (r)$'
+        
         if self._type == 'is_cylindrical':
             y_label = '$2\\pi r \\Sigma (r)$'
-
+            
         radii = self._coords[0]
         radiusSpace = np.linspace(0.001, 1)
+        dist = self._radius_dist(radiusSpace)
+
         plt.hist(radii, bins=100, density=True)
-        plt.plot(radiusSpace, self._radius_dist(radiusSpace))
+        plt.plot(radiusSpace, dist)
         plt.xlabel('r')
         plt.ylabel(y_label)
         plt.show()
@@ -57,8 +64,8 @@ class DataView:
         v1, v2, v3 = self._vels
         radii = self._coords[0]
         velocity_vector_squared = v1 ** 2 + v2 ** 2 + v3 ** 2
-        T = np.sum(0.5 * star_masses * velocity_vector_squared)
-        W = np.sum(star_masses * self._pot(radii))
+        T = np.sum(0.5 * STAR_MASS * velocity_vector_squared)
+        W = np.sum(STAR_MASS * self._pot(radii))
         print("T = ", 2 * T)
         print("|W| = ", np.abs(W))
         print("ratio = ", 2 * T / np.abs(W))
@@ -66,11 +73,18 @@ class DataView:
     def plot_R_den(self):
         pass
 
-    def plot_vCirc(self, Rmax=1):
+    def plot_vCirc(self, Rmax=1, use_physical = False):
         radiusSpace = np.linspace(0.001, Rmax)
         radius = self._coords[0]
         vcirc_radius_space = self._pot.vCirc(radiusSpace)
         vcirc = self._pot.vCirc(radius)
+        if use_physical:
+            radiusSpace *= RADIUS_UNIT
+            radius *= RADIUS_UNIT
+            vcirc_radius_space *= VELOCITY_UNIT
+            vcirc *= VELOCITY_UNIT
+            Rmax *= RADIUS_UNIT
+
         plt.plot(radiusSpace, vcirc_radius_space, label='Model')
         plt.scatter(radius, vcirc, alpha=0.3, c='orange', label='Sampled')
         plt.xlabel('r (kpc)')
